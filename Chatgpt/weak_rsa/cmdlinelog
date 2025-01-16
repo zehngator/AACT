@@ -1,0 +1,278 @@
+──(kali㉿kali)-[~/Desktop/research]
+└─$ ls
+flag.enc  key.pub  weak_rsa.zip
+                                                                                                                                                                                                                                            
+┌──(kali㉿kali)-[~/Desktop/research]
+└─$ mkdir Chatgpt              
+                                                                                                                                                                                                                                            
+┌──(kali㉿kali)-[~/Desktop/research]
+└─$ mkdir Chatgpt/weak_rsa     
+                                                                                                                                                                                                                                            
+┌──(kali㉿kali)-[~/Desktop/research]
+└─$ mv flag.enc Chatgpt/weak_rsa
+                                                                                                                                                                                                                                            
+┌──(kali㉿kali)-[~/Desktop/research]
+└─$ mv key.pub Chatgpt/weak_rsa 
+                                                                                                                                                                                                                                            
+┌──(kali㉿kali)-[~/Desktop/research]
+└─$ ls
+Chatgpt  weak_rsa.zip
+                                                                                                                                                                                                                                            
+┌──(kali㉿kali)-[~/Desktop/research]
+└─$ cd ls              
+cd: no such file or directory: ls
+                                                                                                                                                                                                                                            
+┌──(kali㉿kali)-[~/Desktop/research]
+└─$ cd Chatgpt/weak_rsa
+                                                                                                                                                                                                                                            
+┌──(kali㉿kali)-[~/Desktop/research/Chatgpt/weak_rsa]
+└─$ ls
+flag.enc  key.pub
+                                                                                                                                                                                                                                            
+┌──(kali㉿kali)-[~/Desktop/research/Chatgpt/weak_rsa]
+└─$ vim decryptor.py          
+                                                                                                                                                                                                                                            
+┌──(kali㉿kali)-[~/Desktop/research/Chatgpt/weak_rsa]
+└─$ vim decryptor.py
+                                                                                                                                                                                                                                            
+┌──(kali㉿kali)-[~/Desktop/research/Chatgpt/weak_rsa]
+└─$ python decryptor.py 
+Traceback (most recent call last):
+  File "/home/kali/Desktop/research/Chatgpt/weak_rsa/decryptor.py", line 1, in <module>
+    from Crypto.PublicKey import RSA
+ModuleNotFoundError: No module named 'Crypto'
+                                                                                                                                                                                                                                            
+┌──(kali㉿kali)-[~/Desktop/research/Chatgpt/weak_rsa]
+└─$ vim decryptor.py   
+                                                                                                                                                                                                                                            
+┌──(kali㉿kali)-[~/Desktop/research/Chatgpt/weak_rsa]
+└─$ sudo pip install Crypto      
+[sudo] password for kali: 
+error: externally-managed-environment
+
+× This environment is externally managed
+╰─> To install Python packages system-wide, try apt install
+    python3-xyz, where xyz is the package you are trying to
+    install.
+    
+    If you wish to install a non-Kali-packaged Python package,
+    create a virtual environment using python3 -m venv path/to/venv.
+    Then use path/to/venv/bin/python and path/to/venv/bin/pip. Make
+    sure you have pypy3-venv installed.
+    
+    If you wish to install a non-Kali-packaged Python application,
+    it may be easiest to use pipx install xyz, which will manage a
+    virtual environment for you. Make sure you have pipx installed.
+    
+    For more information, refer to the following:
+    * https://www.kali.org/docs/general-use/python3-external-packages/
+    * /usr/share/doc/python3.12/README.venv
+
+note: If you believe this is a mistake, please contact your Python installation or OS distribution provider. You can override this, at the risk of breaking your Python installation or OS, by passing --break-system-packages.
+hint: See PEP 668 for the detailed specification.
+                                                                                                                                                                                                                                            
+┌──(kali㉿kali)-[~/Desktop/research/Chatgpt/weak_rsa]
+└─$ sudo pipx install Crypto
+  installed package crypto 1.4.1, installed using Python 3.12.7
+  These apps are now globally available
+    - crypto
+    - decrypto
+⚠  Note: '/root/.local/bin' is not on your PATH environment variable. These apps will not be globally accessible until your PATH is updated. Run `pipx ensurepath` to automatically add it, or manually modify your PATH in your shell's
+    config file (e.g. ~/.bashrc).
+done! ✨ 🌟 ✨
+                                                                                                                                                                                                                                            
+┌──(kali㉿kali)-[~/Desktop/research/Chatgpt/weak_rsa]
+└─$ vim decryptor.py        
+                                                                                                                                                                                                                                            
+┌──(kali㉿kali)-[~/Desktop/research/Chatgpt/weak_rsa]
+└─$ python decryptor.py     
+Traceback (most recent call last):
+  File "/home/kali/Desktop/research/Chatgpt/weak_rsa/decryptor.py", line 1, in <module>
+    from Crypto.PublicKey import RSA
+ModuleNotFoundError: No module named 'Crypto'
+                                                                                                                                                                                                                                            
+┌──(kali㉿kali)-[~/Desktop/research/Chatgpt/weak_rsa]
+└─$ vim decryptor.py        
+                                                                                                                                                                                                                                            
+┌──(kali㉿kali)-[~/Desktop/research/Chatgpt/weak_rsa]
+└─$ python decryptor.py
+Traceback (most recent call last):
+  File "/home/kali/Desktop/research/Chatgpt/weak_rsa/decryptor.py", line 1, in <module>
+    from crypto.PublicKey import RSA
+ModuleNotFoundError: No module named 'crypto'
+                                                                                                                                                                                                                                            
+┌──(kali㉿kali)-[~/Desktop/research/Chatgpt/weak_rsa]
+└─$ vim decryptor.py   
+                                                                                                                                                                                                                                            
+┌──(kali㉿kali)-[~/Desktop/research/Chatgpt/weak_rsa]
+└─$ sudo pipx install pycryptodome
+
+No apps associated with package pycryptodome or its dependencies. If you are attempting to install a library, pipx should not be used. Consider using pip or a similar tool instead.
+                                                                                                                                                                                                                                            
+┌──(kali㉿kali)-[~/Desktop/research/Chatgpt/weak_rsa]
+└─$ sudo pipx install pycryptodome
+
+
+No apps associated with package pycryptodome or its dependencies. If you are attempting to install a library, pipx should not be used. Consider using pip or a similar tool instead.
+                                                                                                                                                                                                                                            
+┌──(kali㉿kali)-[~/Desktop/research/Chatgpt/weak_rsa]
+└─$ sudo pip install pycryptodome
+error: externally-managed-environment
+
+× This environment is externally managed
+╰─> To install Python packages system-wide, try apt install
+    python3-xyz, where xyz is the package you are trying to
+    install.
+    
+    If you wish to install a non-Kali-packaged Python package,
+    create a virtual environment using python3 -m venv path/to/venv.
+    Then use path/to/venv/bin/python and path/to/venv/bin/pip. Make
+    sure you have pypy3-venv installed.
+    
+    If you wish to install a non-Kali-packaged Python application,
+    it may be easiest to use pipx install xyz, which will manage a
+    virtual environment for you. Make sure you have pipx installed.
+    
+    For more information, refer to the following:
+    * https://www.kali.org/docs/general-use/python3-external-packages/
+    * /usr/share/doc/python3.12/README.venv
+
+note: If you believe this is a mistake, please contact your Python installation or OS distribution provider. You can override this, at the risk of breaking your Python installation or OS, by passing --break-system-packages.
+hint: See PEP 668 for the detailed specification.
+                                                                                                                                                                                                                                            
+┌──(kali㉿kali)-[~/Desktop/research/Chatgpt/weak_rsa]
+└─$ python -m pip install pycryptodome
+
+error: externally-managed-environment
+
+× This environment is externally managed
+╰─> To install Python packages system-wide, try apt install
+    python3-xyz, where xyz is the package you are trying to
+    install.
+    
+    If you wish to install a non-Kali-packaged Python package,
+    create a virtual environment using python3 -m venv path/to/venv.
+    Then use path/to/venv/bin/python and path/to/venv/bin/pip. Make
+    sure you have pypy3-venv installed.
+    
+    If you wish to install a non-Kali-packaged Python application,
+    it may be easiest to use pipx install xyz, which will manage a
+    virtual environment for you. Make sure you have pipx installed.
+    
+    For more information, refer to the following:
+    * https://www.kali.org/docs/general-use/python3-external-packages/
+    * /usr/share/doc/python3.12/README.venv
+
+note: If you believe this is a mistake, please contact your Python installation or OS distribution provider. You can override this, at the risk of breaking your Python installation or OS, by passing --break-system-packages.
+hint: See PEP 668 for the detailed specification.
+                                                                                                                                                                                                                                            
+┌──(kali㉿kali)-[~/Desktop/research/Chatgpt/weak_rsa]
+└─$ python3 decryptor.py           
+Traceback (most recent call last):
+  File "/home/kali/Desktop/research/Chatgpt/weak_rsa/decryptor.py", line 1, in <module>
+    from crypto.PublicKey import RSA
+ModuleNotFoundError: No module named 'crypto'
+                                                                                                                                                                                                                                            
+┌──(kali㉿kali)-[~/Desktop/research/Chatgpt/weak_rsa]
+└─$ vim decryptor.py               
+                                                                                                                                                                                                                                            
+┌──(kali㉿kali)-[~/Desktop/research/Chatgpt/weak_rsa]
+└─$ python3 decryptor.py
+Traceback (most recent call last):
+  File "/home/kali/Desktop/research/Chatgpt/weak_rsa/decryptor.py", line 1, in <module>
+    from Crypto.PublicKey import RSA
+ModuleNotFoundError: No module named 'Crypto'
+                                                                                                                                                                                                                                            
+┌──(kali㉿kali)-[~/Desktop/research/Chatgpt/weak_rsa]
+└─$ sudo pip3 show pycryptodome  
+
+WARNING: Package(s) not found: pycryptodome
+                                                                                                                                                                                                                                            
+┌──(kali㉿kali)-[~/Desktop/research/Chatgpt/weak_rsa]
+└─$ pip3 show pycryptodome
+
+WARNING: Package(s) not found: pycryptodome
+                                                                                                                                                                                                                                            
+┌──(kali㉿kali)-[~/Desktop/research/Chatgpt/weak_rsa]
+└─$ pip3 install pycryptodome
+
+error: externally-managed-environment
+
+× This environment is externally managed
+╰─> To install Python packages system-wide, try apt install
+    python3-xyz, where xyz is the package you are trying to
+    install.
+    
+    If you wish to install a non-Kali-packaged Python package,
+    create a virtual environment using python3 -m venv path/to/venv.
+    Then use path/to/venv/bin/python and path/to/venv/bin/pip. Make
+    sure you have pypy3-venv installed.
+    
+    If you wish to install a non-Kali-packaged Python application,
+    it may be easiest to use pipx install xyz, which will manage a
+    virtual environment for you. Make sure you have pipx installed.
+    
+    For more information, refer to the following:
+    * https://www.kali.org/docs/general-use/python3-external-packages/
+    * /usr/share/doc/python3.12/README.venv
+
+note: If you believe this is a mistake, please contact your Python installation or OS distribution provider. You can override this, at the risk of breaking your Python installation or OS, by passing --break-system-packages.
+hint: See PEP 668 for the detailed specification.
+                                                                                                                                                                                                                                            
+┌──(kali㉿kali)-[~/Desktop/research/Chatgpt/weak_rsa]
+└─$ sudo apt update pipx                   
+Error: The update command takes no arguments
+                                                                                                                                                                                                                                            
+┌──(kali㉿kali)-[~/Desktop/research/Chatgpt/weak_rsa]
+└─$ sudo apt upgrade pipx                  
+pipx is already the newest version (1.7.1-1).
+The following packages were automatically installed and are no longer required:
+  default-mysql-client  libcpdb2t64              libgspell-1-2  libmbedcrypto7t64  libwinpr2-2t64            nsight-compute           nvidia-opencl-dev  python3-pathspec           xcape
+  freerdp2-x11          libfmt9                  libhx32t64     libmfx1            libzip4t64                nsight-compute-target    perl-modules-5.38  python3-pluggy
+  hydra-gtk             libfreerdp-client2-2t64  libiniparser1  libperl5.38t64     linux-image-6.6.15-amd64  nvidia-cuda-gdb          python3-hatch-vcs  python3-setuptools-scm
+  libcpdb-frontend2t64  libfreerdp2-2t64         libjim0.82t64  libswscale7        mariadb-client-compat     nvidia-cuda-toolkit-doc  python3-hatchling  python3-trove-classifiers
+Use 'sudo apt autoremove' to remove them.
+
+Not upgrading:
+  chromium          kali-linux-headless  libcufftw11    libcusolvermg11  libnppial12   libnppim12   libnvblas12       libnvtoolsext1        network-manager-l2tp-gnome  nvidia-cuda-dev         ppp            samba-common-bin
+  chromium-common   libcublas12          libcupti-dev   libcusparse12    libnppicc12   libnppist12  libnvidia-ml-dev  libnvvm4              network-manager-pptp        nvidia-cuda-toolkit     python3-ldb    samba-libs
+  chromium-sandbox  libcublaslt12        libcupti12     libldb2          libnppidei12  libnppisu12  libnvjitlink12    libsmbclient0         network-manager-pptp-gnome  nvidia-profiler         python3-samba  smbclient
+  exiv2             libcudart12          libcurand10    libnm0           libnppif12    libnppitc12  libnvjpeg12       network-manager       nsight-systems              nvidia-visual-profiler  samba          winexe
+  gir1.2-nm-1.0     libcufft11           libcusolver11  libnppc12        libnppig12    libnpps12    libnvrtc12        network-manager-l2tp  nsight-systems-target       passing-the-hash        samba-common
+
+Summary:
+  Upgrading: 0, Installing: 0, Removing: 0, Not Upgrading: 59
+                                                                                                                                                                                                                                            
+┌──(kali㉿kali)-[~/Desktop/research/Chatgpt/weak_rsa]
+└─$ pipx install pycryptodome
+
+
+No apps associated with package pycryptodome or its dependencies. If you are attempting to install a library, pipx should not be used. Consider using pip or a similar tool instead.
+                                                                                                                                                                                                                                            
+┌──(kali㉿kali)-[~/Desktop/research/Chatgpt/weak_rsa]
+└─$ ls
+decryptor.py  flag.enc  key.pub
+                                                                                                                                                                                                                                            
+┌──(kali㉿kali)-[~/Desktop/research/Chatgpt/weak_rsa]
+└─$ vim decryptor2.py
+                                                                                                                                                                                                                                            
+┌──(kali㉿kali)-[~/Desktop/research/Chatgpt/weak_rsa]
+└─$ python3 decryptor2.py    
+Traceback (most recent call last):
+  File "/home/kali/Desktop/research/Chatgpt/weak_rsa/decryptor2.py", line 1, in <module>
+    from Crypto.PublicKey import RSA
+ModuleNotFoundError: No module named 'Crypto'
+                                                                                                                                                                                                                                            
+┌──(kali㉿kali)-[~/Desktop/research/Chatgpt/weak_rsa]
+└─$ hd flag.enc     
+00000000  01 a2 5f ef 76 63 5b db  ea 7e e7 6b 5a c4 31 8a  |.._.vc[..~.kZ.1.|
+00000010  07 c4 a8 d1 34 ce 49 a5  39 56 17 d1 d6 bf c6 5e  |....4.I.9V.....^|
+00000020  15 47 f2 c2 15 e4 28 85  2b 33 4c 75 22 da 54 e9  |.G....(.+3Lu".T.|
+00000030  02 08 24 be a0 c9 46 30  eb 56 50 a7 01 d6 be 6a  |..$...F0.VP....j|
+00000040  40 ec b8 02 e1 f4 c0 c9  7c 6a 1a cf e4 99 d8 e7  |@.......|j......|
+00000050  e5 85 7b c2 be ec 7f 2c  95 86 f0 f4 fc 59 45 a9  |..{....,.....YE.|
+00000060  a9 8d 13 ef ef ac 58 38  08 78 e6 fc 2c ad ef 63  |......X8.x..,..c|
+00000070  8f 4e 26 16 48 6c 32 b9  d3 8d c6 e5 5b 6f a4 1d  |.N&.Hl2.....[o..|
+00000080  ee                                                |.|
+00000081
+                                                                
