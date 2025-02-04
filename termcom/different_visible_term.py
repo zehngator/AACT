@@ -4,7 +4,7 @@ import time
 
 def query_ollama(prompt):
     """ Sends a prompt to Ollama and gets a response """
-    response = ollama.chat(model='mistral', messages=[{"role": "user", "content": prompt}])
+    response = ollama.chat(model='dolphin-mistral', messages=[{"role": "user", "content": prompt}])
     return response['message']['content']
 
 def extract_code(mess):
@@ -25,7 +25,7 @@ def run_terminal():
     print("[+] Terminal opened. Waiting for Ollama's commands...")
 
     # Initial problem description
-    problem_description = "This is a CTF challenge where you must analyze a system using Linux commands. Start by gathering information."
+    problem_description = "Solve a ctf at the ip 10.10.10.245"
     next_command = query_ollama(f"{problem_description} Suggest the first command.")
 
     count = 0
