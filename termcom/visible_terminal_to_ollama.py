@@ -1,100 +1,92 @@
 import subprocess
-import platform
 import ollama
-import threading
-import time
+import platform
+import os
 
-# Step 1: Function to open a persistent terminal
-def open_persistent_terminal():
-    system = platform.system()
-
+# Step 1: Function to open a new terminal, execute a command, and write output to a file
+def open_new_terminal_and_capture_output(command, output_file):
     try:
+        system = platform.system()
+        full_command = f"{command} > {output_file} 2>&1"
+
         if system == "Windows":
-            # Open a persistent CMD terminal
-            terminal = subprocess.Popen(
-                ["cmd"], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
-            )
+            # For Windows: Open a new terminal and execute the command
+            subprocess.Popen(["start", "cmd", "/k", full_command], shell=True)
         elif system == "Linux":
-            # Open a persistent Bash terminal
-            terminal = subprocess.Popen(
-                ["bash"], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
-            )
+            # For Linux: Open a new terminal and execute the command
+            subprocess.Popen(["gnome-terminal", "--", "bash", "-c", f"{full_command}; exec bash"])
         elif system == "Darwin":  # macOS
-            # Open a persistent Bash terminal
-            terminal = subprocess.Popen(
-                ["bash"], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
-            )
+            # For macOS: Open a new Terminal window and execute the command
+            subprocess.Popen([
+                "osascript", "-e",
+                f'tell application "Terminal" to do script "{full_command}"'
+            ])
         else:
             print("Unsupported operating system!")
-            return None
+            return False
 
-        return terminal
+        return True
     except Exception as e:
         print(f"Exception occurred: {e}")
-        return None
+        return False
 
-# Step 2: Function to send a command to the terminal
-def send_command_to_terminal(terminal, command):
-    try:
-        if terminal:
-            # Write the command to the terminal
-            terminal.stdin.write(command + "\n")
-            terminal.stdin.flush()
-    except Exception as e:
-        print(f"Error sending command to terminal: {e}")
+def extract_code(mess: str)-> list[str,str]:
+    start = mess.find("'''")
+    codetype = mess[:start].split()[-1]
+    code = mess[start+3:]
+    end = code.find("'''")
+    code = code[:end]
+    return [codetype,code]
 
-# Step 3: Function to continuously read terminal output
-def read_terminal_output(terminal):
-    try:
-        if terminal:
-            while True:
-                output = terminal.stdout.readline()
-                if output:
-                    print(output.strip())  # Display the terminal's output in real time
-    except Exception as e:
-        print(f"Error reading from terminal: {e}")
-
-# Step 4: Function to send data to Ollama
+# Step 2: Function to send data to the Ollama model
 def send_to_ollama(model, prompt):
     try:
-        response = ollama.chat(model=model, prompt=prompt)
-        return response
+        # Use the Ollama Python library to interact with the model
+        response = ollama.chat(model=model, messages=[
+  {
+    'role': 'user',
+    'content': prompt,
+  },])
+        return response  # Return the response object
     except Exception as e:
-        print(f"Error communicating with Ollama: {e}")
+        print(f"Exception occurred while communicating with Ollama: {e}")
         return None
 
 # Main Program
 if __name__ == "__main__":
-    # Open a persistent terminal
-    print("Opening a persistent terminal...")
-    terminal = open_persistent_terminal()
+    # Command to be executed in the new terminal
+    terminal_command = "echo Hello from the new terminal!"
+    output_file = "terminal_output.txt"
 
-    if terminal:
-        # Start a thread to read the terminal output
-        threading.Thread(target=read_terminal_output, args=(terminal,), daemon=True).start()
+    # Remove the output file if it already exists
+    if os.path.exists(output_file):
+        os.remove(output_file)
 
-        print("Terminal is ready. Type commands to send to the terminal.")
-        print("Type 'exit' to close the terminal.")
+    # Step 1: Open a new terminal and capture the command's output
+    print("Opening a new terminal to execute the command...")
+    success = open_new_terminal_and_capture_output(terminal_command, output_file)
 
-        # Main loop to interact with the terminal and Ollama
-        while True:
-            # Get a command from the user
-            user_input = input("Command to terminal: ")
-            
-            if user_input.lower() == "exit":
-                # Close the terminal session
-                terminal.stdin.write("exit\n")
-                terminal.stdin.flush()
-                time.sleep(1)
-                terminal.terminate()
-                print("Terminal closed.")
-                break
+    if success:
+        print(f"Command executed. Waiting for output in '{output_file}'...")
+        print("Please close the new terminal when the command finishes.")
 
-            # Send the command to the terminal
-            send_command_to_terminal(terminal, user_input)
+        # Wait until the file is created and contains data
+        while not os.path.exists(output_file) or os.path.getsize(output_file) == 0:
+            pass  # Busy wait for the file to be written
 
-            # Send the command to Ollama
-            ollama_response = send_to_ollama("llama-2", user_input)
-            if ollama_response:
-                print("Ollama Response:", ollama_response)
+        # Step 2: Read the output from the file
+        with open(output_file, "r") as file:
+            terminal_output = file.read().strip()
 
+        print(f"\nTerminal Output Captured: {terminal_output}")
+
+        # Step 3: Send the captured output to the Ollama model
+        model_name = "dolphin-mistral"  # Replace with the model you want to use
+        ollama_response = send_to_ollama(model_name, terminal_output)
+
+        if ollama_response:
+            print("\nOllama Response:", ollama_response)
+        else:
+            print("Failed to get a response from Ollama.")
+    else:
+        print("Failed to open a new terminal.")
