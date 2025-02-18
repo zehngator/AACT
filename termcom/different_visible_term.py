@@ -2,13 +2,7 @@ import ollama
 import subprocess
 import time
 
-def query_ollama(prompt):
-    """ Sends a prompt to Ollama and gets a response """
-    response = ollama.chat(model='dolphin-mistral', 
-                           messages=[{"role": "system", "content": prompt}])
-    with open('last_response.txt', "w") as f:
-        f.write(response['message']['content'])
-    return response['message']['content']
+
 
 def tool_ollama(prompt):
     """ Sends a prompt to Ollama and gets a response """
@@ -35,88 +29,50 @@ def tool_ollama(prompt):
                                    }
                                }
                            }])
-    print(response['message']['tool_calls'])
+    #print(response['message']['tool_calls'])
     with open('last_response.txt', "w") as f:
         f.write(response['message']['content'])
+        #print(response['message']['content'])
     return response['message']['tool_calls']
 
-def extract_code(mess):
-    start = mess.find("```")
-    print(start)
-    #codetype = mess[start+3:].split()[0]
-    code = mess[start+3:]
-    end = code.find("```")
-    code = code[:end-1]
-    return code
 
+
+import subprocess
 
 def run_terminal():
-    """ Opens a new interactive terminal and lets Ollama control it """
+    """ Opens a persistent tmux session and executes commands inside it """
     
-    # Open a new interactive bash shell
-    term = subprocess.Popen(["gnome-terminal", "--", "bash"], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, bufsize=1)
-    
-    print("[+] Terminal opened. Waiting for Ollama's commands...")
+    # Start a tmux session
+    session_name = "ollama_ctf"
+    subprocess.run(f"tmux new-session -d -s {session_name}", shell=True)
 
-    # Initial problem description
-    problem_description = "Solve a ctf at the ip 10.10.10.245"
-    #next_command = query_ollama(f"{problem_description} Suggest the first command.")
-    next_command = tool_ollama(f"{problem_description} Suggest the first command.")
+    print("[+] tmux session started. Running commands inside it.")
 
-    count = 0
-    # def run_bash(code):
-    #     # Send command to terminal
-    #     term.stdin.write(next_command + "\n")
-    #     term.stdin.flush()
-    
-    # def run_python(code):
-    #     name = str(count)+'.py'
-    #     with open(name,"w") as f:
-    #         f.write(code)
-    #     print(f"[+] created python code under {name}")
-    #     count += 1
-
+    problem_description = "Solve a ctf at the IP 10.10.10.245"
+    full_command = tool_ollama(f"{problem_description} Suggest the first command.")
 
     while True:
-        #command_set = extract_code(next_command)
-        print(type(next_command))
-        #print(next_command[0]['name'])
-        print(next_command[0].function['arguments']['code'])
-        
-        command_set = next_command[0]['function']['arguments']['code']
-        print(f"[+] Ollama suggests: {command_set}")
+        next_command = full_command[0]['function']['arguments']['code']
+        print(f"[+] Ollama suggests: {next_command}")
 
-        # if command_set[0] == 'bash':
-        #     run_bash(command_set[1])
-        
-        # if command_set[0] == 'python':
-        #     run_python(command_set[1])
-        #     command_set[1] += f"\n This code was saved under {count}.py"
-        
-        term.stdin.write(command_set + "\n")
-        term.stdin.flush()
-        # Give the command time to execute
-        time.sleep(2)
+        # Run command inside tmux session
+        subprocess.run(f"tmux send-keys -t {session_name} '{next_command}' Enter", shell=True)
 
-        # Read the output from the terminal
-        output = term.stdout.read()
-        if not output:
-            print("[!] No output received.")
-            output = "no output recived"
-
+        # Simulate waiting for command execution
+        output = subprocess.run(f"tmux capture-pane -p -t {session_name}", shell=True, capture_output=True, text=True).stdout
         print(f"[+] Command Output:\n{output}")
 
-        # Ask Ollama to decide the next step based on output
-        next_command = query_ollama(f"The last command was:\n{command_set}\nThe output was:\n{output}\nWhat is the next command?")
-        
         if "exit" in next_command.lower():
             print("[+] Ollama decided to stop.")
             break
 
-    term.stdin.write("exit\n")
-    term.stdin.flush()
-    term.terminate()
-    print("[+] Terminal session closed.")
+        next_command = tool_ollama(f"The last command was:\n{next_command}\nThe output was:\n{output}\nWhat is the next command?")
+
+    # Close tmux session
+    subprocess.run(f"tmux kill-session -t {session_name}", shell=True)
+    print("[+] tmux session closed.")
+
+
 
 if __name__ == "__main__":
     run_terminal()
