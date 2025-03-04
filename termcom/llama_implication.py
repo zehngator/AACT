@@ -63,19 +63,20 @@ def run_terminal():
 
     print("[+] tmux session started. Running commands inside it.")
 
-    problem_description = "Solve a ctf at the IP 10.129.71.10 do not use -p-"
+    problem_description = "Solve a ctf at the IP 10.129.201.161"
     full_command = tool_ollama(f"{problem_description} Suggest the first command.")
-
+    sig_name = "ioefwj"
     while True:
         next_command = full_command[0]['function']['arguments']['code']
         print(f"[+] Ollama suggests: {next_command}")
         # if (full_command[0]['function']['arguments']['why']):
         #     print(full_command[0]['function']['arguments']['why'])
         # Run command inside tmux session
-        subprocess.run(f"tmux send-keys -t {session_name} '{next_command}' Enter", shell=True)
-        time.sleep(10)
+        subprocess.run(f"tmux send-keys -t {session_name} '{next_command}; tmux wait-for -S {sig_name}' C-m", shell=True)
+        subprocess.run(f"tmux wait-for {sig_name}", shell=True)
         # Simulate waiting for command execution
         output = subprocess.run(f"tmux capture-pane -p -t {session_name}", shell=True, capture_output=True, text=True).stdout
+        output = output[output.rfind(sig_name) + len(sig_name):]
         print(f"[+] Command Output:\n{output}")
 
         if "exit" in next_command.lower():
