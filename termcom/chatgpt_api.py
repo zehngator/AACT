@@ -17,8 +17,7 @@ def chat_with_gpt(prompts, api_key):
                 },
                 "required": ["command"]
             }
-        }
-    ]
+        ]
 
     for prompt in prompts:
         try:
