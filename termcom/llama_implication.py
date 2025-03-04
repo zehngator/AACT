@@ -2,7 +2,17 @@ import ollama
 import groq 
 import subprocess
 import time
+import os
 
+def createUniqueLog(filename):
+    counter = 1 
+    while True:
+        file = f"{filename}{counter}.txt"
+        if not os.path.exists(filename):
+            with open(filename, 'w') as f:
+                f.write(f"This is instance log #{counter} of {filename}\n")
+                print(f"[+] File create: {filename}")
+            return filename
 
 
 def tool_ollama(prompt):
@@ -62,8 +72,8 @@ def run_terminal():
     subprocess.run(f"tmux new-session -d -s {session_name}", shell=True)
 
     print("[+] tmux session started. Running commands inside it.")
-
-    problem_description = "Solve a ctf at the IP 10.129.201.161"
+    filename = createUniqueLog("ctflogs/Redeemer")
+    problem_description = "Solve a ctf at the IP 10.129.49.90"
     full_command = tool_ollama(f"{problem_description} Suggest the first command.")
     sig_name = "ioefwj"
     while True:
@@ -76,6 +86,9 @@ def run_terminal():
         subprocess.run(f"tmux wait-for {sig_name}", shell=True)
         # Simulate waiting for command execution
         output = subprocess.run(f"tmux capture-pane -p -t {session_name}", shell=True, capture_output=True, text=True).stdout
+        with open(filename, 'a') as f:
+            f.write(output[output.rfind('➜'):]+'\n')
+
         output = output[output.rfind(sig_name) + len(sig_name):]
         print(f"[+] Command Output:\n{output}")
 
