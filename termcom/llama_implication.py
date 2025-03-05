@@ -1,18 +1,24 @@
-import ollama
-import groq 
+import ollama 
 import subprocess
-import time
 import os
+import csv
+from pathlib import Path
 
-def createUniqueLog(filename):
+
+def createUniqueLog(filename, directory="/home/matt/Desktop/AACT/termcom/ctflogs"):
     counter = 1 
     while True:
-        file = f"{filename}{counter}.txt"
-        if not os.path.exists(filename):
-            with open(filename, 'w') as f:
-                f.write(f"This is instance log #{counter} of {filename}\n")
+        file = Path(directory) / f"{filename}_{counter}.csv"
+        if not os.path.exists(file):
+            with file.open('w', newline='') as f:
+                info = ["command number", "command", "reasoning", "output"]
+                writer = csv.writer(f)
+                writer.writerow(info)
+                # f.write(f"This is instance log #{counter} of {filename}\n")
+                # f.write("command number, command,reasoning, output ")
                 print(f"[+] File create: {filename}")
-            return filename
+            return file
+        counter += 1
 
 
 def tool_ollama(prompt):
@@ -70,14 +76,22 @@ def run_terminal():
     # Start a tmux session
     session_name = "ollama_ctf"
     subprocess.run(f"tmux new-session -d -s {session_name}", shell=True)
-
+    counter = 1
     print("[+] tmux session started. Running commands inside it.")
-    filename = createUniqueLog("ctflogs/Redeemer")
-    problem_description = "Solve a ctf at the IP 10.129.49.90"
-    full_command = tool_ollama(f"{problem_description} Suggest the first command.")
+    file = createUniqueLog("Redeemer")
+    problem_description = "Solve a ctf at the IP 10.129.134.154"
+    full_command = tool_ollama(f"{problem_description} Suggest the first command to solve the ctf .")
     sig_name = "ioefwj"
     while True:
-        next_command = full_command[0]['function']['arguments']['code']
+
+        ########################### Isolating variabes from llama ###############################
+        broken_up = full_command[0]['function']['arguments']
+        next_command = broken_up['code']
+        why = ''
+        if broken_up['why']:
+            why = broken_up['why']
+        ##########################################################################################
+
         print(f"[+] Ollama suggests: {next_command}")
         # if (full_command[0]['function']['arguments']['why']):
         #     print(full_command[0]['function']['arguments']['why'])
@@ -86,8 +100,11 @@ def run_terminal():
         subprocess.run(f"tmux wait-for {sig_name}", shell=True)
         # Simulate waiting for command execution
         output = subprocess.run(f"tmux capture-pane -p -t {session_name}", shell=True, capture_output=True, text=True).stdout
-        with open(filename, 'a') as f:
-            f.write(output[output.rfind('➜'):]+'\n')
+        with file.open('a',newline='') as f:
+            instance = [counter , next_command , why , output[output.rfind(sig_name)+len(sig_name):].strip()]
+            writer = csv.writer(f,quoting=csv.QUOTE_ALL)
+            writer.writerow(instance)
+            counter += 1
 
         output = output[output.rfind(sig_name) + len(sig_name):]
         print(f"[+] Command Output:\n{output}")

@@ -1,0 +1,20 @@
+This is instance log #3 of Redeemer
+➜  AACT git:(main) ✗ ; tmux wait-for -S ioefwj
+➜  AACT git:(main) ✗ next command to run; tmux wait-for -S ioefwj
+zsh: command not found: next
+➜  AACT git:(main) ✗ bash --version; tmux wait-for -S ioefwj
+GNU bash, version 5.2.15(1)-release (x86_64-pc-linux-gnu)
+Copyright (C) 2022 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+
+This is free software; you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+➜  AACT git:(main) ✗ GNU bash, version 5.2.15(1)-release (x86_64-pc-linux-gnu);
+tmux wait-for -S ioefwj
+zsh: no matches found: 5.2.15(1)-release
+➜  AACT git:(main) ✗ GNU bash, version 5.2.15(1)-release (x86_64-pc-linux-gnu);
+tmux wait-for -S ioefwj
+zsh: no matches found: 5.2.15(1)-release
+➜  AACT git:(main) ✗ GNU bash, version 5.2.15(1)-release (x86_64-pc-linux-gnu);
+tmux wait-for -S ioefwj
+zsh: no matches found: 5.2.15(1)-release
