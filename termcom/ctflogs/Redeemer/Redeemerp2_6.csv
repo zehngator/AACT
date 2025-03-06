@@ -1,0 +1,15 @@
+command number,command,reasoning,output
+"1","redis-cli","solve a ctf at IP 10.129.91.189","Could not connect to Redis at 127.0.0.1:6379: Connection refused
+not connected>
+not connected> exit"
+"2","ssh user@10.129.91.189","The error message suggests that we need to access the server to investigate further.","ssh: connect to host 10.129.91.189 port 22: Connection refused"
+"3","nmap -p- -sC -sV 10.129.91.189","The connection was refused, so we need to scan the port and identify open services","Starting Nmap 7.93 ( https://nmap.org ) at 2025-03-06 11:50 EST
+Nmap scan report for 10.129.91.189
+Host is up (0.028s latency).
+Not shown: 65534 closed tcp ports (conn-refused)
+PORT     STATE SERVICE VERSION
+6379/tcp open  redis   Redis key-value store 5.0.7
+
+Service detection performed. Please report any incorrect results at https://nmap
+.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 19.86 seconds"

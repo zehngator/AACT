@@ -1,0 +1,3 @@
+command number,command,reasoning,output
+"1","redis-cli info","to start exploring the redis database","Could not connect to Redis at 127.0.0.1:6379: Connection refused"
+"2","redis-cli -h 127.0.0.1 info","connection refused, try connecting to redis with host","Could not connect to Redis at 127.0.0.1:6379: Connection refused"
