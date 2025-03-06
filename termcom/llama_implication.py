@@ -67,8 +67,14 @@ def tool_ollama(prompt):
     print(response)
     return response['message']['tool_calls']
 
+problem_description = "Solve a ctf at the IP 10.129.91.189 using redis-cli"
+ip_address ="10.129.91.189"
 
-
+def wait_response(sig_name):
+    try:
+        subprocess.run(f"tmux wait-for {sig_name}", shell=True,timeout=30)
+    except subprocess.TimeoutExpired:
+        print("[+] Command took too long to execute. Moving on to the next command.")
 
 def run_terminal():
     """ Opens a persistent tmux session and executes commands inside it """
@@ -76,12 +82,16 @@ def run_terminal():
     # Start a tmux session
     session_name = "ollama_ctf"
     subprocess.run(f"tmux new-session -d -s {session_name}", shell=True)
-    counter = 1
     print("[+] tmux session started. Running commands inside it.")
-    file = createUniqueLog("Redeemer")
-    problem_description = "Solve a ctf at the IP 10.129.134.154"
+
+    #create log file 
+    file = createUniqueLog("Redeemerp2")
+    #problem_description = "Solve a ctf at the IP 10.129.91.189"
     full_command = tool_ollama(f"{problem_description} Suggest the first command to solve the ctf .")
-    sig_name = "ioefwj"
+    sig_name = "พ"
+
+    # counter for logging which command it is
+    counter = 1
     while True:
 
         ########################### Isolating variabes from llama ###############################
@@ -97,7 +107,7 @@ def run_terminal():
         #     print(full_command[0]['function']['arguments']['why'])
         # Run command inside tmux session
         subprocess.run(f"tmux send-keys -t {session_name} '{next_command}; tmux wait-for -S {sig_name}' C-m", shell=True)
-        subprocess.run(f"tmux wait-for {sig_name}", shell=True)
+        wait_response(sig_name)
         # Simulate waiting for command execution
         output = subprocess.run(f"tmux capture-pane -p -t {session_name}", shell=True, capture_output=True, text=True).stdout
         with file.open('a',newline='') as f:
@@ -113,7 +123,7 @@ def run_terminal():
             print("[+] Ollama decided to stop.")
             break
 
-        full_command = tool_ollama(f"The last command was:\n{next_command}\nThe output was:\n{output}\nWhat is the next command?")
+        full_command = tool_ollama(f"The last command was: {next_command} The output was: {output}\nWhat is the next command to solve the ctf at this ip {ip_address}?")
 
     # Close tmux session
     subprocess.run(f"tmux kill-session -t {session_name}", shell=True)
