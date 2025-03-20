@@ -8,7 +8,7 @@ import argparse
 
 
 ollama_model = "qwq"
-ip_address ="10.129.83.47"
+ip_address ="10.129.88.225"
 problem_description = f"Solve a ctf at the IP {ip_address}" 
 start_message= [{'role': "system", 'content': f"You are a ctf solver and you are given a task to solve a ctf at the IP {ip_address} and you need to use the extract_code tool everytime"}]
 Timed_out = False
@@ -83,6 +83,10 @@ def tool_ollama(messages, prompt):
                            messages=messages,
                            tools=get_code
                            )
+    #print(response['message']['tool_calls'])
+    with open('last_response.txt', "w") as f:
+        f.write(response['message']['content'])
+        #print(response['message']['content'])
     print(response)
     # return response['message']['tool_calls']
     return (response['message']['tool_calls'], messages)
@@ -100,7 +104,7 @@ def run_terminal():
     """ Opens a persistent tmux session and executes commands inside it """
     
     # Start a tmux session
-    session_name = f"_ctf"
+    session_name = f"{ollama_model}_ctf"
     subprocess.run(f"tmux new-session -d -s {session_name}", shell=True)
     print("[+] tmux session started. Running commands inside it.")
 
@@ -158,9 +162,8 @@ def run_terminal():
         if "exit" in next_command.lower():
             print("[+] Ollama decided to stop.")
             break
-        start = time.time()
+
         full_command, messages = tool_ollama(messages, f"What is the next step to solve the ctf?")
-        ollama_time = time.time() - start
         #full_command, messages = tool_ollama(messages, f"The last command was: {next_command} The output was: {output}\nWhat is the next command to solve the ctf at this ip {ip_address}?")
 
     # Close tmux session

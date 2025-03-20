@@ -1,2 +1,0 @@
-command number,command,reasoning,output
-"1","nmap -p- --min-rate=100 10.129.91.189","initial reconnaissance","➜  AACT git:(main) ✗ nmap -p- --min-rate=100 10.129.91.189; tmux wait-for -"
