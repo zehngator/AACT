@@ -5,30 +5,42 @@ import csv
 import time
 from pathlib import Path
 import argparse
-
+import ast
+import mini_selector as mini
 
 ollama_model = "qwq"
-ip_address ="10.129.83.47"
+ip_address ="10.129.139.127"
 problem_description = f"Solve a ctf at the IP {ip_address}" 
-start_message= [{'role': "system", 'content': f"You are a ctf solver and you are given a task to solve a ctf at the IP {ip_address} and you need to use the extract_code tool everytime"}]
+start_message= [{'role': "system", 'content': f"You are a ctf solver and you are given a task to solve a ctf at the IP {ip_address} and you need to use the extract_code tool everytime. To reiterate you must use the tool call no matter what even if it is a bad code."}]
 Timed_out = False
-
+continual_messages = ''
+challenge = "Appointment"
+session_name = "_ctf"
+manual = False
 # Command line arguments
 parser = argparse.ArgumentParser(description="Example script with options")
 parser.add_argument("-i", "--ip", dest="ip_address", help="IP address of the CTF")
 parser.add_argument("-m", "--model", dest="ollama_model", help="Ollama model to use")
 parser.add_argument("-d", "--description", dest="problem_description", help="Description of the problem")
+parser.add_argument("-c", "--continual", dest="continual_messages", help="Continual messages")
+parser.add_argument("-e", "--manual", help="Puts the code into manual mode: enter to do next command", action="store_true")
 
 args = parser.parse_args()
 
 if args.ip_address:
     ip_address = args.ip_address
-
+if args.manual:
+    manual = True
 if args.ollama_model:
     ollama_model = args.ollama_model
 
 if args.problem_description:
     problem_description = args.problem_description
+
+if args.continual_messages or continual_messages != '':
+    with open(args.continual_messages, 'r') as f:
+        read = f.read()
+        start_message_messages = ast.literal_eval(read)
 
 
 def createUniqueLog(filename, directory=f"/home/matt/Desktop/AACT/{ollama_model}/ctflogs"):
@@ -88,15 +100,28 @@ def tool_ollama(messages, prompt):
     return (response['message']['tool_calls'], messages)
 
 
-def wait_response(sig_name):
+def wait_response(sig_name, mess):
+    global Timed_out
     try:
-        subprocess.run(f"tmux wait-for {sig_name}", shell=True,timeout=30)
+        subprocess.run(f"tmux wait-for {sig_name}", shell=True,timeout=10)
         Timed_out = False
+
     except subprocess.TimeoutExpired:
+        output = subprocess.run(f"tmux capture-pane -p -t {session_name}", shell=True, capture_output=True, text=True).stdout
+        output = output[output.rfind(sig_name) + len(sig_name):].strip()
+        status = mini.selector(mess, output)
+        print(f"[+] Is the command Finished: {status[0]}")
+        print(f"[+] Expected next ti: {status}")
         Timed_out = True
+        if status[0]:
+            return True
+        return wait_response(sig_name, mess)
         print("[+] Command took too long to execute. Moving on to the next command.")
+        
 
 def run_terminal():
+    global Timed_out
+    global session_name
     """ Opens a persistent tmux session and executes commands inside it """
     
     # Start a tmux session
@@ -105,10 +130,13 @@ def run_terminal():
     print("[+] tmux session started. Running commands inside it.")
 
     #create log file 
-    file = createUniqueLog("Redeemer")
+    file = createUniqueLog(challenge)
     #problem_description = "Solve a ctf at the IP 10.129.91.189"
     start = time.time()
-    full_command, messages = tool_ollama(start_message, f"{problem_description} Suggest the first command to solve the ctf .")
+    if continual_messages != '':
+        full_command, messages = tool_ollama(start_message, f"{problem_description} Suggest the first command to solve the ctf .")
+    else:
+        full_command, messages = tool_ollama(start_message, f"What is the next step to solve the ctf?")
     ollama_time = time.time() - start
     sig_name = "พ"
     
@@ -134,7 +162,15 @@ def run_terminal():
             subprocess.run(f"tmux send-keys -t {session_name} '{next_command}' C-m", shell=True)
         else:
             subprocess.run(f"tmux send-keys -t {session_name} '{next_command}; tmux wait-for -S {sig_name}' C-m", shell=True)
-        wait_response(sig_name)
+        if manual:
+            print(f"[+] Press enter to continue: 'y' to send with signal or 'n' to send without signal")
+            ti = input()
+            if ti == 'n':
+                Timed_out = True
+            else:
+                Timed_out = False
+        else:
+            Timed_out = wait_response(sig_name, next_command)
         command_time = time.time() - start
         # Simulate waiting for command execution
         output = subprocess.run(f"tmux capture-pane -p -t {session_name}", shell=True, capture_output=True, text=True).stdout
