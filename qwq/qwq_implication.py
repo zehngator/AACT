@@ -9,12 +9,12 @@ import ast
 import mini_selector as mini
 
 ollama_model = "qwq"
-ip_address ="94.237.56.222:32793"
+ip_address ="10.10.11.58"
 problem_description = f"Solve a ctf at the IP {ip_address}" 
 start_message= [{'role': "system", 'content': f"You are a ctf solver and you are given a task to solve a ctf at the IP {ip_address} and you need to use the extract_code tool everytime. To reiterate you must use the tool call no matter what even if it is a bad code."}]
 Timed_out = False
 continual_messages = ''
-challenge = "Flag_Command"
+challenge = "Dog"
 session_name = "_ctf"
 manual = False
 # Command line arguments
@@ -47,15 +47,21 @@ def createUniqueLog(filename, directory=f"/home/matt/Desktop/AACT/{ollama_model}
     counter = 1 
     while True:
         file = Path(directory) / f"{filename}_{counter}.csv"
+        mess_file = Path(directory) / f"{filename}_{counter}_messages.txt"
         if not os.path.exists(file):
             with file.open('w', newline='') as f:
-                info = ["command number", "command", "reasoning", "reasoning time", "output", "command time", "ollama's Memory"]
+                info = ["command number", "command", "reasoning", "reasoning time", "output", "command time"]
                 writer = csv.writer(f)
                 writer.writerow(info)
                 # f.write(f"This is instance log #{counter} of {filename}\n")
                 # f.write("command number, command,reasoning, output ")
                 print(f"[+] File create: {str(file)}")
-            return file
+            with mess_file.open('w', newline='') as f:
+                f.write("this is suppose to hold the memory")
+                print(f"[+] File create: {str(mess_file)}")
+
+            return file,mess_file
+
         counter += 1
 
 
@@ -130,7 +136,7 @@ def run_terminal():
     print("[+] tmux session started. Running commands inside it.")
 
     #create log file 
-    file = createUniqueLog(challenge)
+    file,mess_file = createUniqueLog(challenge)
     #problem_description = "Solve a ctf at the IP 10.129.91.189"
     start = time.time()
     if continual_messages != '':
@@ -183,10 +189,14 @@ def run_terminal():
 
         ############################# Logging the command and output ############################
         with file.open('a',newline='') as f:
-            instance = [counter , next_command , why , ollama_time, output[output.rfind(sig_name)+len(sig_name):].strip(), command_time, messages]
+            instance = [counter , next_command , why , ollama_time, output[output.rfind(sig_name)+len(sig_name):].strip(), command_time]
             writer = csv.writer(f,quoting=csv.QUOTE_ALL)
             writer.writerow(instance)
             counter += 1
+
+        with mess_file.open('w',newline='') as f:
+            f.write(str(messages))
+            f.write("\n")
         ##########################################################################################
 
         print(f"[+] Command Output:\n{output}")
