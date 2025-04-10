@@ -9,12 +9,12 @@ import ast
 import mini_selector as mini
 
 ollama_model = "qwq"
-ip_address ="10.10.11.58"
+ip_address ="10.129.69.47"
 problem_description = f"Solve a ctf at the IP {ip_address}" 
 start_message= [{'role': "system", 'content': f"You are a ctf solver and you are given a task to solve a ctf at the IP {ip_address} and you need to use the extract_code tool everytime. To reiterate you must use the tool call no matter what even if it is a bad code."}]
 Timed_out = False
 continual_messages = ''
-challenge = "Dog"
+challenge = "Vaccine"
 session_name = "_ctf"
 manual = False
 # Command line arguments
@@ -40,9 +40,9 @@ if args.problem_description:
 if args.continual_messages or continual_messages != '':
     with open(args.continual_messages, 'r') as f:
         read = f.read()
-        start_message_messages = ast.literal_eval(read)
+        start_message = ast.literal_eval(read)
 
-
+# creates a unique log file stored in ctf logs
 def createUniqueLog(filename, directory=f"/home/matt/Desktop/AACT/{ollama_model}/ctflogs"):
     counter = 1 
     while True:
@@ -64,7 +64,7 @@ def createUniqueLog(filename, directory=f"/home/matt/Desktop/AACT/{ollama_model}
 
         counter += 1
 
-
+# call to run the AI including the tool call to extract_code
 def tool_ollama(messages, prompt):
     """ Sends a prompt to Ollama and gets a response """
     #print(prompt)
@@ -72,6 +72,7 @@ def tool_ollama(messages, prompt):
         {"role": "user", 
          "content": prompt,
         })
+    #tool call basic format found on https://ollama.com/docs/api
     get_code = [{
                     'type': "function",
                     'function': {
@@ -109,19 +110,19 @@ def tool_ollama(messages, prompt):
 def wait_response(sig_name, mess):
     global Timed_out
     try:
-        subprocess.run(f"tmux wait-for {sig_name}", shell=True,timeout=10)
+        subprocess.run(f"tmux wait-for {sig_name}", shell=True,timeout=30)
         Timed_out = False
 
     except subprocess.TimeoutExpired:
-        output = subprocess.run(f"tmux capture-pane -p -t {session_name}", shell=True, capture_output=True, text=True).stdout
-        output = output[output.rfind(sig_name) + len(sig_name):].strip()
-        status = mini.selector(mess, output)
-        print(f"[+] Is the command Finished: {status[0]}")
-        print(f"[+] Expected next ti: {status}")
+        # output = subprocess.run(f"tmux capture-pane -p -t {session_name}", shell=True, capture_output=True, text=True).stdout
+        # output = output[output.rfind(sig_name) + len(sig_name):].strip()
+        # status = mini.selector(mess, output)
+        # print(f"[+] Is the command Finished: {status[0]}")
+        # print(f"[+] Expected next ti: {status}")
         Timed_out = True
-        if status[0]:
-            return True
-        return wait_response(sig_name, mess)
+        # if status[0]:
+        #     return True
+        # return wait_response(sig_name, mess)
         print("[+] Command took too long to execute. Moving on to the next command.")
         
 
@@ -165,7 +166,7 @@ def run_terminal():
         # Run command inside tmux session
         start = time.time()
         if Timed_out:
-            subprocess.run(f"tmux send-keys -t {session_name} '{next_command}' C-m", shell=True)
+            subprocess.run(f"tmux send-keys -t {session_name} \"{next_command}\" C-m", shell=True)
         else:
             subprocess.run(f"tmux send-keys -t {session_name} '{next_command}; tmux wait-for -S {sig_name}' C-m", shell=True)
         if manual:
@@ -201,9 +202,9 @@ def run_terminal():
 
         print(f"[+] Command Output:\n{output}")
 
-        if "exit" in next_command.lower():
-            print("[+] Ollama decided to stop.")
-            break
+        # if "exit" in next_command.lower():
+        #     print("[+] Ollama decided to stop.")
+        #     break
         start = time.time()
         full_command, messages = tool_ollama(messages, f"What is the next step to solve the ctf?")
         ollama_time = time.time() - start
