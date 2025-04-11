@@ -1,0 +1,64 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import glob
+import os
+
+# === Settings ===
+folder1 = '/home/matt/Desktop/AACT/llama3.1:8b/ctflogs'   # <<<<< First CSV folder
+folder2 = '/home/matt/Desktop/AACT/qwq/ctflogs'  # <<<<< Second CSV folder
+time_column = 'reasoning time'                # <<<<< Column name (must be the same in both)
+file_pattern = '*.csv'
+save_plot_as = 'time_distribution_comparison.png'
+
+# === Function to Load CSVs ===
+def load_time_data(folder_path, time_column):
+    csv_files = glob.glob(os.path.join(folder_path, file_pattern))
+    if not csv_files:
+        raise ValueError(f"No CSV files found in {folder_path}")
+    
+    dfs = []
+    for file in csv_files:
+        try:
+            df = pd.read_csv(file)
+            if time_column in df.columns:
+                dfs.append(df[[time_column]])
+            else:
+                print(f"Warning: {file} does not contain column '{time_column}'")
+        except Exception as e:
+            print(f"Error reading {file}: {e}")
+    
+    if not dfs:
+        raise ValueError(f"No valid CSV files with the specified time column in {folder_path}")
+    
+    combined_df = pd.concat(dfs, ignore_index=True)
+    try:
+        combined_df[time_column] = pd.to_datetime(combined_df[time_column])
+    except Exception as e:
+        print(f"Error parsing dates: {e}")
+        raise
+    
+    return combined_df
+
+# === Load both datasets ===
+data1 = load_time_data(folder1, time_column)
+data2 = load_time_data(folder2, time_column)
+
+# === Plot both distributions ===
+plt.figure(figsize=(14, 7))
+
+plt.hist(data1[time_column], bins=50, alpha=0.5, label='Dataset 1', edgecolor='black')
+plt.hist(data2[time_column], bins=50, alpha=0.5, label='Dataset 2', edgecolor='black')
+
+plt.xlabel('Time')
+plt.ylabel('Frequency')
+plt.title('Distribution of Time Variable Across Two Datasets')
+plt.xticks(rotation=45)
+plt.legend()
+plt.tight_layout()
+plt.grid(True)
+
+# Save and show
+plt.savefig(save_plot_as)
+plt.show()
+
+print(f"Plot saved as {save_plot_as}")

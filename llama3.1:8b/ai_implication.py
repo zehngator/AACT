@@ -6,12 +6,12 @@ import time
 from pathlib import Path
 import argparse
 import ast
-import mini_selector as mini
+# import mini_selector as mini
 
-ollama_model = "qwq"
+ollama_model = "llama3.1:8b"
 ip_address ="10.129.246.225"
 problem_description = f"Solve a ctf at the IP {ip_address}" 
-start_message= [{'role': "system", 'content': f"You are a ctf solver and you are given a task to solve a ctf at the IP {ip_address} and you need to use the extract_code tool everytime. To reiterate you must use the tool call no matter what even if it is a bad code."}]
+start_message= [{'role': "system", 'content': f"You are a ctf solver and you are given a task to solve a ctf at the IP {ip_address} and you need to use the extract_code tool everytime. To reiterate you must use the tool call no matter what."}]
 Timed_out = False
 continual_messages = ''
 challenge = "Unified"
@@ -140,7 +140,7 @@ def run_terminal():
     file,mess_file = createUniqueLog(challenge)
     #problem_description = "Solve a ctf at the IP 10.129.91.189"
     start = time.time()
-    if continual_messages != '':
+    if continual_messages == '':
         full_command, messages = tool_ollama(start_message, f"{problem_description} Suggest the first command to solve the ctf .")
     else:
         full_command, messages = tool_ollama(start_message, f"What is the next step to solve the ctf?")
