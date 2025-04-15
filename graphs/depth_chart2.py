@@ -91,11 +91,32 @@ for i in range(len(all_tactics_sequence) - 1):
         last_seen[src_tactic].add(dst_tactic)
 
 # Calculate node sizes based on how often each tactic appears
-node_sizes = [frequency_counter[tactic] * 500 for tactic in G.nodes()]
+node_sizes = [frequency_counter[tactic] * 1000 for tactic in G.nodes()]
 
 # Draw the simplified unified weighted depth graph
 plt.figure(figsize=(24, 14))
-pos = nx.spring_layout(G, k=0.5, iterations=50)
-nx.draw(G, pos, with_labels=True, node_size=node_sizes, node_color="lightblue", font_size=10, font_weight="bold", arrowsize=20)
-plt.title("Unified Simplified CTF MITRE ATT&CK Depth Graph (Weighted by Usage)", fontsize=16)
+# pos = nx.spring_layout(G, k=0.5, iterations=50)
+pos = nx.nx_agraph.graphviz_layout(G, prog='dot')  # Top-down
+# or
+# pos = nx.nx_agraph.graphviz_layout(G, prog='dot', args='-Grankdir=LR')  # Left-right
+
+nx.draw_networkx_edges(
+    G, pos,
+    arrowstyle='-|>',
+    arrowsize=20,
+    edge_color='gray',
+    connectionstyle='arc3,rad=0.2'
+)
+nx.draw_networkx_labels(
+    G, pos,
+    font_size=12,
+    font_weight='bold',
+    bbox=dict(facecolor='white', edgecolor='black', boxstyle='round,pad=0.2')
+)
+
+# nx.draw(G, pos, with_labels=True, node_size=node_sizes, node_color="lightblue", font_size=15, font_weight="bold", arrowsize=20)
+nx.draw_networkx_nodes(G, pos, node_size=node_sizes, node_color='lightblue')
+plt.title("Weighted combination of logical movement throught the Mitre ATT&CK Framework", fontsize=16)
+plt.savefig("/home/matt/Desktop/AACT/graphs/depth2.png", format="png", dpi=300, bbox_inches='tight')
+print("Graph saved to /home/matt/Desktop/AACT/qwq/ctf_retries2.png")
 plt.show()

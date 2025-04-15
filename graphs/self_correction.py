@@ -127,19 +127,24 @@ for node in G.nodes():
     else:
         node_colors.append("green")  # Success node
 
-plt.figure(figsize=(32, 24))
+# Final draw: upscale for clarity
+plt.figure(figsize=(40, 30))  # Was 32x24 — now more zoom room
+
 nx.draw(G, pos,
         with_labels=True,
-        node_size=3000,
+        node_size=10000,        # Was 3000 — bigger circles
         node_color=node_colors,
-        font_size=6,
+        font_size=20,          # Was 6 — bigger text
         font_weight="bold",
         arrows=True,
-        arrowsize=20)
+        arrowsize=25)          # Was 20 — thicker arrows
 
-plt.title("CTF Retry Attempts (Fan-Out Layout, Small Font)", fontsize=20)
+plt.title("CTF Retry Attempts (Fan-Out Layout, High-Res)", fontsize=24)
 plt.axis('off')
 
+# ✅ Save as sharp PNG before showing
 plt.savefig("/home/matt/Desktop/AACT/qwq/ctf_retries.png", format="png", dpi=300, bbox_inches='tight')
 print("Graph saved to /home/matt/Desktop/AACT/qwq/ctf_retries.png")
+
+# Show it last
 plt.show()

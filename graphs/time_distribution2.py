@@ -42,12 +42,12 @@ data2 = load_duration_data(folder2, time_column)
 plt.figure(figsize=(14, 7))
 
 # Plot histograms + KDE curves
-sns.histplot(data1[time_column], bins=50, kde=True, label='Dataset 1', color='blue', alpha=0.4)
-sns.histplot(data2[time_column], bins=50, kde=True, label='Dataset 2', color='orange', alpha=0.4)
+sns.histplot(data1[time_column], bins=50, kde=True, label='llama3.1:8b', color='blue', alpha=0.4)
+sns.histplot(data2[time_column], bins=50, kde=True, label='QwQ', color='orange', alpha=0.4)
 
 plt.xlabel('Duration (seconds)')
 plt.ylabel('Frequency')
-plt.title('Distribution of Step Durations (in Seconds)')
+plt.title('Time AI models spent on reasoning per response')
 plt.legend()
 plt.tight_layout()
 plt.grid(True)
