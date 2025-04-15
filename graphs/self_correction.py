@@ -117,7 +117,7 @@ for root in roots:
 # Assign random position if missing
 for node in G.nodes():
     if node not in pos:
-        pos[node] = (random.uniform(-10, 10), random.uniform(-10, 10))
+        pos[node] = (random.uniform(-5, 5), random.uniform(-5, 5))
 
 # --- Draw Final Fan-Out Graph ---
 node_colors = []
@@ -132,9 +132,9 @@ plt.figure(figsize=(40, 30))  # Was 32x24 — now more zoom room
 
 nx.draw(G, pos,
         with_labels=True,
-        node_size=10000,        # Was 3000 — bigger circles
+        node_size=30000,        # Was 3000 — bigger circles
         node_color=node_colors,
-        font_size=20,          # Was 6 — bigger text
+        font_size=25,          # Was 6 — bigger text
         font_weight="bold",
         arrows=True,
         arrowsize=25)          # Was 20 — thicker arrows
