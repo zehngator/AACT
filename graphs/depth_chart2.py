@@ -94,7 +94,7 @@ for i in range(len(all_tactics_sequence) - 1):
 node_sizes = [frequency_counter[tactic] * 1000 for tactic in G.nodes()]
 
 # Draw the simplified unified weighted depth graph
-plt.figure(figsize=(24, 14))
+plt.figure(figsize=(27, 14))
 # pos = nx.spring_layout(G, k=0.5, iterations=50)
 pos = nx.nx_agraph.graphviz_layout(G, prog='dot')  # Top-down
 # or
@@ -116,7 +116,7 @@ nx.draw_networkx_labels(
 
 # nx.draw(G, pos, with_labels=True, node_size=node_sizes, node_color="lightblue", font_size=15, font_weight="bold", arrowsize=20)
 nx.draw_networkx_nodes(G, pos, node_size=node_sizes, node_color='lightblue')
-plt.title("Weighted combination of logical movement throught the Mitre ATT&CK Framework", fontsize=16)
-plt.savefig("/home/matt/Desktop/AACT/graphs/depth2.png", format="png", dpi=300, bbox_inches='tight')
+plt.title("Weighted combination of logical movement throught the Mitre ATT&CK Framework", fontsize=20, weight='bold')
+plt.savefig("/home/matt/Desktop/AACT/graphs/depth2.png", format="png", dpi=400, bbox_inches='tight')
 print("Graph saved to /home/matt/Desktop/AACT/qwq/ctf_retries2.png")
 plt.show()

@@ -11,7 +11,8 @@ import mini_selector as mini
 ollama_model = "qwq"
 ip_address ="10.129.208.84"
 problem_description = f"Solve a ctf at the IP {ip_address}" 
-start_message= [{'role': "system", 'content': f"You are a ctf solver and you are given a task to solve a ctf at the IP {ip_address} and you need to use the extract_code tool everytime. To reiterate you must use the tool call no matter what even if it is a bad code."}]
+start_message= [{'role': "system", 'content': f"You are a ctf solver and you are given a task to solve a ctf at the IP {ip_address} and \
+                 you need to use the extract_code tool everytime. To reiterate you must use the tool call no matter what even if it is a bad code."}]
 Timed_out = False
 continual_messages = ''
 challenge = "Oopsie"
