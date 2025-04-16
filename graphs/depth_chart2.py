@@ -116,7 +116,7 @@ nx.draw_networkx_labels(
 
 # nx.draw(G, pos, with_labels=True, node_size=node_sizes, node_color="lightblue", font_size=15, font_weight="bold", arrowsize=20)
 nx.draw_networkx_nodes(G, pos, node_size=node_sizes, node_color='lightblue')
-plt.title("Weighted combination of logical movement throught the Mitre ATT&CK Framework", fontsize=20, weight='bold')
+plt.title("Weighted Combination of Attempted Logical Movement throughout the Mitre ATT&CK Framework", fontsize=20, weight='bold')
 plt.savefig("/home/matt/Desktop/AACT/graphs/depth2.png", format="png", dpi=400, bbox_inches='tight')
 print("Graph saved to /home/matt/Desktop/AACT/qwq/ctf_retries2.png")
 plt.show()
