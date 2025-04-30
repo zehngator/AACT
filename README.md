@@ -5,4 +5,6 @@ Testing various LLMs against CFTs to see there cabality to work throught logical
 
 ![image](images/AACTflow2.drawio.png) 
 
-Primary code and logs used are in the QwQ file. 
+Primary code and logs used are in the QwQ file.
+
+![Paper](Paper_unedited.pdf)
