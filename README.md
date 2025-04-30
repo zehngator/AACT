@@ -7,6 +7,10 @@ Testing various LLMs against CFTs to see there cabality to work throught logical
 
 Primary code and logs used are in the QwQ file. 
 
-[Paper](Paper_unedited)
+[Paper](Zehnder_SY496.pdf)
+
+[Presentation](Automation_cyber_explotation_AI_pres.pptx)
+
+[Poster](Cyber Sciences_Matthew Zehnder.pdf)
 
 
